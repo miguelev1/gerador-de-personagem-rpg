@@ -11,6 +11,8 @@
 
 ## 📸 Preview
 
+<img width="1920" height="1080" alt="Captura de tela 2026-04-02 215053" src="https://github.com/user-attachments/assets/5b0a0308-a1d5-4d06-b745-a29765edaffb" />
+<img width="1920" height="1080" alt="Captura de tela 2026-04-02 215053" src="https://github.com/user-attachments/assets/5b0a0308-a1d5-4d06-b745-a29765edaffb" />
 
 
 ---
