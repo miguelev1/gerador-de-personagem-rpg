@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gerador de Personagem</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── TOKENS ────────────────────────────────────────────── */
+    :root {
+      --bg:        #0b0b0f;
+      --surface:   #13131a;
+      --card:      #1a1a25;
+      --border:    #2e2e45;
+      --accent:    #c9a84c;
+      --accent2:   #7c5cbf;
+      --accent3:   #3d8c7a;
+      --text:      #d4cfc8;
+      --muted:     #6b6880;
+      --primary:   #e8dcc8;
+      --danger:    #9b4444;
+
+      --font-title: 'Cinzel Decorative', serif;
+      --font-body:  'Crimson Pro', Georgia, serif;
+
+      --radius: 6px;
+      --glow-gold: 0 0 18px rgba(201,168,76,.18);
+      --glow-purple: 0 0 18px rgba(124,92,191,.18);
+    }
+
+    /* ── RESET ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      line-height: 1.65;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE TEXTURE OVERLAY ─────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: .028;
+      pointer-events: none;
+    }
+
+    /* ── LAYOUT ─────────────────────────────────────────────── */
+    .page { position: relative; z-index: 1; max-width: 920px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+    /* ── HEADER ─────────────────────────────────────────────── */
+    .site-header {
+      text-align: center;
+      padding: 3rem 0 2.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+    .site-header::after {
+      content: '';
+      display: block;
+      width: 120px; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      margin: 1.2rem auto 0;
+    }
+    .site-header h1 {
+      font-family: var(--font-title);
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+      color: var(--accent);
+      letter-spacing: .06em;
+      text-shadow: 0 0 40px rgba(201,168,76,.35);
+    }
+    .site-header p {
+      font-style: italic;
+      color: var(--muted);
+      margin-top: .4rem;
+      font-size: .95rem;
+    }
+
+    /* ── GERAR BUTTON ───────────────────────────────────────── */
+    .btn-gerar {
+      display: flex; align-items: center; gap: .6rem;
+      margin: 0 auto 2.5rem;
+      padding: .75rem 2.2rem;
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-family: var(--font-title);
+      font-size: .8rem;
+      letter-spacing: .12em;
+      cursor: pointer;
+      border-radius: var(--radius);
+      transition: background .2s, box-shadow .2s, color .2s;
+      text-transform: uppercase;
+    }
+    .btn-gerar:hover {
+      background: rgba(201,168,76,.08);
+      box-shadow: var(--glow-gold);
+    }
+    .btn-gerar:active { transform: scale(.97); }
+    .btn-gerar .icon { font-size: 1.1rem; transition: transform .4s; }
+    .btn-gerar.loading .icon { animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── FICHA ──────────────────────────────────────────────── */
+    #ficha {
+      opacity: 1;
+      transition: opacity .25s;
+    }
+    #ficha.fade { opacity: 0; }
+
+    /* ── SECTION CARDS ─────────────────────────────────────── */
+    .section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem 1.6rem;
+      margin-bottom: 1.1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .section::before {
+      content: '';
+      position: absolute; top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: var(--accent);
+      opacity: .7;
+    }
+    .section.purple::before  { background: var(--accent2); }
+    .section.teal::before    { background: var(--accent3); }
+    .section.crimson::before { background: var(--danger); }
+
+    .section-label {
+      font-family: var(--font-title);
+      font-size: .62rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: .9rem;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .section.purple  .section-label { color: var(--accent2); }
+    .section.teal    .section-label { color: var(--accent3); }
+    .section.crimson .section-label { color: var(--danger); }
+    .section-label::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(90deg, currentColor, transparent);
+      opacity: .3;
+    }
+
+    /* ── TWO-COL GRID ────────────────────────────────────────── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+    @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    /* ── DATA ROWS ─────────────────────────────────────────── */
+    .row {
+      display: flex; gap: .5rem;
+      align-items: baseline;
+      padding: .18rem 0;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+    }
+    .row:last-child { border-bottom: none; }
+    .row-key {
+      font-size: .78rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      min-width: 90px;
+      flex-shrink: 0;
+    }
+    .row-val { color: var(--primary); }
+    .row-val.highlight { color: var(--accent); font-weight: 600; }
+
+    /* ── BADGE ─────────────────────────────────────────────── */
+    .badge {
+      display: inline-block;
+      padding: .15rem .55rem;
+      border-radius: 2px;
+      font-size: .75rem;
+      letter-spacing: .06em;
+      font-family: var(--font-title);
+    }
+    .badge-gold   { background: rgba(201,168,76,.12); color: var(--accent); border: 1px solid rgba(201,168,76,.25); }
+    .badge-purple { background: rgba(124,92,191,.12); color: var(--accent2); border: 1px solid rgba(124,92,191,.25); }
+    .badge-teal   { background: rgba(61,140,122,.12); color: var(--accent3); border: 1px solid rgba(61,140,122,.25); }
+
+    /* ── ATRIBUTOS TABLE ───────────────────────────────────── */
+    .atrib-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: .6rem;
+      margin-top: .5rem;
+    }
+    @media (max-width: 500px) { .atrib-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    .atrib-cell {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      text-align: center;
+      padding: .7rem .3rem .5rem;
+      position: relative;
+      transition: border-color .2s;
+    }
+    .atrib-cell.primario {
+      border-color: var(--accent);
+      box-shadow: var(--glow-gold);
+    }
+    .atrib-cell .sigla {
+      font-family: var(--font-title);
+      font-size: .6rem;
+      letter-spacing: .1em;
+      color: var(--muted);
+      display: block;
+    }
+    .atrib-cell.primario .sigla { color: var(--accent); }
+    .atrib-cell .valor {
+      font-family: var(--font-title);
+      font-size: 1.55rem;
+      color: var(--primary);
+      line-height: 1.1;
+      display: block;
+      margin: .15rem 0;
+    }
+    .atrib-cell.primario .valor { color: var(--accent); }
+    .atrib-cell .nome-full {
+      font-size: .65rem;
+      color: var(--muted);
+      display: block;
+    }
+    .atrib-cell .star {
+      position: absolute; top: 4px; right: 6px;
+      font-size: .6rem;
+      color: var(--accent);
+    }
+    .total-line {
+      text-align: right;
+      font-size: .8rem;
+      color: var(--muted);
+      margin-top: .6rem;
+      font-style: italic;
+    }
+
+    /* ── SENSORIAL PILLS ───────────────────────────────────── */
+    .sense-block { padding: .5rem 0; }
+    .sense-key {
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+      margin-bottom: .2rem;
+    }
+    .sense-val {
+      color: var(--primary);
+      font-style: italic;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    /* ── PERSONALITY TAGS ──────────────────────────────────── */
+    .trait-list { display: flex; flex-direction: column; gap: .55rem; }
+    .trait {
+      display: flex; flex-direction: column; gap: .1rem;
+      padding: .6rem .8rem;
+      background: var(--surface);
+      border-left: 2px solid var(--border);
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+    .trait.gold   { border-color: var(--accent); }
+    .trait.purple { border-color: var(--accent2); }
+    .trait.teal   { border-color: var(--accent3); }
+    .trait.red    { border-color: var(--danger); }
+    .trait-type {
+      font-size: .65rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--muted);
+    }
+    .trait-text { color: var(--primary); }
+
+    /* ── FOOTER ─────────────────────────────────────────────── */
+    .site-footer {
+      text-align: center;
+      margin-top: 3rem;
+      color: var(--muted);
+      font-size: .8rem;
+      font-style: italic;
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+    }
+
+    /* ── SCROLL REVEAL ─────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .section { animation: fadeUp .4s ease both; }
+    .section:nth-child(1) { animation-delay: .05s; }
+    .section:nth-child(2) { animation-delay: .10s; }
+    .section:nth-child(3) { animation-delay: .15s; }
+    .section:nth-child(4) { animation-delay: .20s; }
+    .section:nth-child(5) { animation-delay: .25s; }
+    .section:nth-child(6) { animation-delay: .30s; }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <h1>Gerador de Personagem</h1>
+    <p>Forjado nas sombras entre dados e destino</p>
+  </header>
+
+  <!-- BOTÃO GERAR -->
+  <button class="btn-gerar" id="btnGerar" onclick="gerarPersonagem()">
+    <span class="icon">⚄</span>
+    Gerar Novo Personagem
+  </button>
+
+  <!-- FICHA -->
+  <div id="ficha">
+    {% include "geradordepersonagem/_ficha.html" with p=personagem %}
+  </div>
+
+  <footer class="site-footer">
+    "Não existe personagem sem história. Não existe história sem escolha."
+  </footer>
+
+</div>
+
+<script>
+  const CSRF = "{{ csrf_token }}";
+
+  async function gerarPersonagem() {
+    const btn   = document.getElementById("btnGerar");
+    const ficha = document.getElementById("ficha");
+
+    btn.classList.add("loading");
+    ficha.classList.add("fade");
+
+    try {
+      const res  = await fetch("/gerar/");
+      const data = await res.json();
+      renderFicha(data);
+    } catch (e) {
+      console.error("Erro ao gerar personagem:", e);
+    } finally {
+      btn.classList.remove("loading");
+      setTimeout(() => ficha.classList.remove("fade"), 50);
+    }
+  }
+
+  function bar(key, val, cls = "") {
+    return `<div class="row">
+      <span class="row-key">${key}</span>
+      <span class="row-val ${cls}">${val}</span>
+    </div>`;
+  }
+
+  function sense(key, val) {
+    return `<div class="sense-block">
+      <div class="sense-key">${key}</div>
+      <div class="sense-val">${val}</div>
+    </div>`;
+  }
+
+  function renderFicha(p) {
+    // Atributos
+    const atribCells = p.atributos_lista.map(a => `
+      <div class="atrib-cell ${a.primario ? 'primario' : ''}">
+        ${a.primario ? '<span class="star">★</span>' : ''}
+        <span class="sigla">${a.sigla}</span>
+        <span class="valor">${a.valor}</span>
+        <span class="nome-full">${a.nome}</span>
+      </div>`).join("");
+
+    const html = `
+      <div class="grid-2">
+
+        <!-- RAÇA & FÍSICA -->
+        <div class="section">
+          <div class="section-label">Raça &amp; Física</div>
+          ${bar("Raça", `<span class="badge badge-gold">${p.raca_nome}</span>`)}
+          ${bar("Descrição", p.raca_desc)}
+          ${bar("Bônus", p.raca_bonus)}
+          ${bar("Altura", p.altura)}
+          ${bar("Tom de pele", p.pele)}
+        </div>
+
+        <!-- ORIGEM & SEXO -->
+        <div class="section teal">
+          <div class="section-label">Origem &amp; Identidade</div>
+          ${bar("Sexo", p.sexo)}
+          ${bar("Origem", p.origem)}
+          ${bar("Reino", `<span class="badge badge-teal">${p.reino_nome}</span>`)}
+          ${bar("Sobre", p.reino_desc)}
+        </div>
+
+      </div>
+
+      <!-- CLASSE -->
+      <div class="section purple">
+        <div class="section-label">Classe</div>
+        <div class="grid-2">
+          <div>
+            ${bar("Classe", `<span class="badge badge-purple">${p.classe_nome}</span>`)}
+            ${bar("Subclasse", p.sub_nome)}
+            ${bar("Atributos", p.atributos_str)}
+          </div>
+          <div>
+            ${bar("Identidade", p.identidade)}
+          </div>
+        </div>
+      </div>
+
+      <!-- ATRIBUTOS -->
+      <div class="section">
+        <div class="section-label">Atributos  <span style="font-size:.55rem;color:var(--muted)">(★ primário)</span></div>
+        <div class="atrib-grid">${atribCells}</div>
+        <div class="total-line">Total: ${p.total_atributos} pontos</div>
+      </div>
+
+      <!-- SENSORIAL -->
+      <div class="section teal">
+        <div class="section-label">Características Sensoriais</div>
+        <div class="grid-2">
+          ${sense("Odor", p.odor)}
+          ${sense("Voz", p.voz)}
+          ${sense("Expressão", p.expressao)}
+          ${sense("Marcas", p.marca)}
+        </div>
+      </div>
+
+      <!-- PERSONALIDADE -->
+      <div class="section crimson">
+        <div class="section-label">Personalidade</div>
+        <div class="trait-list">
+          <div class="trait gold">
+            <span class="trait-type">Arquétipo</span>
+            <span class="trait-text">${p.arquetipo}</span>
+          </div>
+          <div class="trait red">
+            <span class="trait-type">Traço Sombra</span>
+            <span class="trait-text">${p.traco_sombra}</span>
+          </div>
+          <div class="trait teal">
+            <span class="trait-type">Virtude</span>
+            <span class="trait-text">${p.virtude}</span>
+          </div>
+          <div class="trait purple">
+            <span class="trait-type">Vício</span>
+            <span class="trait-text">${p.vicio}</span>
+          </div>
+        </div>
+      </div>`;
+
+    document.getElementById("ficha").innerHTML = html;
+  }
+</script>
+
+</body>
+</html>

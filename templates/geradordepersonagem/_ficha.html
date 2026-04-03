@@ -1,0 +1,91 @@
+{% with p=p %}
+
+<div class="grid-2">
+
+  <!-- RAÇA & FÍSICA -->
+  <div class="section">
+    <div class="section-label">Raça &amp; Física</div>
+    <div class="row"><span class="row-key">Raça</span>      <span class="row-val"><span class="badge badge-gold">{{ p.raca_nome }}</span></span></div>
+    <div class="row"><span class="row-key">Descrição</span> <span class="row-val">{{ p.raca_desc }}</span></div>
+    <div class="row"><span class="row-key">Bônus</span>     <span class="row-val">{{ p.raca_bonus }}</span></div>
+    <div class="row"><span class="row-key">Altura</span>    <span class="row-val">{{ p.altura }}</span></div>
+    <div class="row"><span class="row-key">Tom de pele</span><span class="row-val">{{ p.pele }}</span></div>
+  </div>
+
+  <!-- ORIGEM & SEXO -->
+  <div class="section teal">
+    <div class="section-label">Origem &amp; Identidade</div>
+    <div class="row"><span class="row-key">Sexo</span>   <span class="row-val">{{ p.sexo }}</span></div>
+    <div class="row"><span class="row-key">Origem</span> <span class="row-val">{{ p.origem }}</span></div>
+    <div class="row"><span class="row-key">Reino</span>  <span class="row-val"><span class="badge badge-teal">{{ p.reino_nome }}</span></span></div>
+    <div class="row"><span class="row-key">Sobre</span>  <span class="row-val">{{ p.reino_desc }}</span></div>
+  </div>
+
+</div>
+
+<!-- CLASSE -->
+<div class="section purple">
+  <div class="section-label">Classe</div>
+  <div class="grid-2">
+    <div>
+      <div class="row"><span class="row-key">Classe</span>    <span class="row-val"><span class="badge badge-purple">{{ p.classe_nome }}</span></span></div>
+      <div class="row"><span class="row-key">Subclasse</span> <span class="row-val">{{ p.sub_nome }}</span></div>
+      <div class="row"><span class="row-key">Atributos</span> <span class="row-val">{{ p.atributos_str }}</span></div>
+    </div>
+    <div>
+      <div class="row"><span class="row-key">Identidade</span><span class="row-val">{{ p.identidade }}</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ATRIBUTOS NUMÉRICOS -->
+<div class="section">
+  <div class="section-label">Atributos <span style="font-size:.55rem;color:var(--muted)">(★ primário)</span></div>
+  <div class="atrib-grid">
+    {% for a in p.atributos_lista %}
+    <div class="atrib-cell {% if a.primario %}primario{% endif %}">
+      {% if a.primario %}<span class="star">★</span>{% endif %}
+      <span class="sigla">{{ a.sigla }}</span>
+      <span class="valor">{{ a.valor }}</span>
+      <span class="nome-full">{{ a.nome }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="total-line">Total: {{ p.total_atributos }} pontos</div>
+</div>
+
+<!-- SENSORIAL -->
+<div class="section teal">
+  <div class="section-label">Características Sensoriais</div>
+  <div class="grid-2">
+    <div class="sense-block"><div class="sense-key">Odor</div>      <div class="sense-val">{{ p.odor }}</div></div>
+    <div class="sense-block"><div class="sense-key">Voz</div>       <div class="sense-val">{{ p.voz }}</div></div>
+    <div class="sense-block"><div class="sense-key">Expressão</div> <div class="sense-val">{{ p.expressao }}</div></div>
+    <div class="sense-block"><div class="sense-key">Marcas</div>    <div class="sense-val">{{ p.marca }}</div></div>
+  </div>
+</div>
+
+<!-- PERSONALIDADE -->
+<div class="section crimson">
+  <div class="section-label">Personalidade</div>
+  <div class="trait-list">
+    <div class="trait gold">
+      <span class="trait-type">Arquétipo</span>
+      <span class="trait-text">{{ p.arquetipo }}</span>
+    </div>
+    <div class="trait red">
+      <span class="trait-type">Traço Sombra</span>
+      <span class="trait-text">{{ p.traco_sombra }}</span>
+    </div>
+    <div class="trait teal">
+      <span class="trait-type">Virtude</span>
+      <span class="trait-text">{{ p.virtude }}</span>
+    </div>
+    <div class="trait purple">
+      <span class="trait-type">Vício</span>
+      <span class="trait-text">{{ p.vicio }}</span>
+    </div>
+  </div>
+</div>
+
+{% endwith %}
