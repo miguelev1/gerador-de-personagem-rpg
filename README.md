@@ -1,5 +1,10 @@
 # ⚄ Gerador de Personagem RPG
 
+![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white)
+![Django](https://img.shields.io/badge/Django-6.x-092E20?style=flat-square&logo=django&logoColor=white)
+![License](https://img.shields.io/badge/Licença-MIT-gold?style=flat-square)
+![Status](https://img.shields.io/badge/Status-Em%20desenvolvimento-blueviolet?style=flat-square)
+
 > Gerador aleatório de fichas de personagem para RPG de mesa, construído com Django. Cria personagens completos com raça, classe, atributos, origem, traços de personalidade e características sensoriais — tudo em um clique.
 
 ---
