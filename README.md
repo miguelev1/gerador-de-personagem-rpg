@@ -1,2 +1,143 @@
-# gerador-de-personagem-rpg
-Gerador de fichas de personagem para RPG, desenvolvido em Django com atualizações em tempo real via AJAX.
+# ⚄ Gerador de Personagem RPG
+
+> Gerador aleatório de fichas de personagem para RPG de mesa, construído com Django. Cria personagens completos com raça, classe, atributos, origem, traços de personalidade e características sensoriais — tudo em um clique.
+
+---
+
+## 📸 Preview
+
+
+
+---
+
+## ✨ Funcionalidades
+
+- 🎲 **Geração completa** de fichas com um único clique
+- 🧬 **16 raças** disponíveis (Humano, Elfo, Draconato, Tiefling, Autômato e mais)
+- ⚔️ **14 classes** com subclasses únicas (Mago, Ladino, Bárbaro, Paladino, Bardo e mais)
+- 📊 **Sistema de atributos numéricos** — 75 pontos distribuídos por camadas de prioridade, garantindo que os atributos primários da subclasse sejam sempre os mais altos
+- 🗺️ **60 reinos de origem** com descrições temáticas
+- 🎭 **Personalidade em 4 dimensões**: Arquétipo, Traço Sombra, Virtude e Vício
+- 👁️ **Características sensoriais**: odor, voz, expressão e marcas de pele
+- ⚡ **Geração via AJAX** — novo personagem sem recarregar a página
+- 🌑 **Interface dark fantasy** com tema visual imersivo
+
+---
+
+## 🛠️ Tecnologias
+
+| Tecnologia | Uso |
+|---|---|
+| Python 3.12 | Linguagem principal |
+| Django 6.x | Framework web |
+| HTML/CSS/JS | Interface do usuário |
+| Google Fonts (Cinzel + Crimson Pro) | Tipografia |
+
+---
+
+## 📁 Estrutura do Projeto
+
+```
+DjangoProject-gerador/
+├── DjangoProject_gerador/
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+│
+├── geradordepersonagem/
+│   ├── views.py        # lógica do gerador + views Django
+│   ├── urls.py         # rotas do app
+│   ├── models.py
+│   └── apps.py
+│
+├── templates/
+│   └── geradordepersonagem/
+│       ├── index.html  # template principal
+│       └── _ficha.html # partial do personagem (SSR)
+│
+└── manage.py
+```
+
+---
+
+## 🚀 Como rodar localmente
+
+### Pré-requisitos
+
+- Python 3.10+
+- pip
+
+### Instalação
+
+```bash
+# 1. Clone o repositório
+git clone https://github.com/miguelev1/gerador-de-personagem-rpg.git
+cd gerador-de-personagem-rpg
+
+# 2. Crie e ative o ambiente virtual
+python -m venv .venv
+
+# Windows
+.venv\Scripts\activate
+
+# macOS/Linux
+source .venv/bin/activate
+
+# 3. Instale as dependências
+pip install django
+
+# 4. Rode as migrações
+python manage.py migrate
+
+# 5. Inicie o servidor
+python manage.py runserver
+```
+
+Acesse `http://127.0.0.1:8000/` no navegador.
+
+---
+
+## 🎮 Como usar
+
+1. Abra `http://127.0.0.1:8000/` no navegador
+2. Uma ficha de personagem é gerada automaticamente
+3. Clique em **"Gerar Novo Personagem"** para criar outro instantaneamente
+4. A geração é feita via AJAX — sem recarregar a página
+
+---
+
+## ⚙️ Sistema de Atributos
+
+Os 75 pontos são distribuídos em três camadas com hierarquia garantida:
+
+| Camada | Atributos | Faixa de valores |
+|---|---|---|
+| **Primária** ★ | Definidos pela subclasse | 16 – 20 |
+| **Secundária** | 1 ou 2 atributos de suporte | 12 – 15 |
+| **Terciária** | Demais atributos | 5 – 11 |
+
+> Os atributos primários são **sempre** maiores que os secundários, que são **sempre** maiores que os terciários.
+
+---
+
+## 🤝 Contribuição
+
+Contribuições são bem-vindas! Para contribuir:
+
+1. Fork o repositório
+2. Crie uma branch: `git checkout -b minha-feature`
+3. Commit suas mudanças: `git commit -m 'feat: minha feature'`
+4. Push: `git push origin minha-feature`
+5. Abra um Pull Request
+
+---
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---
+
+<p align="center">
+  Feito com ☕ e dados de RPG
+</p>
