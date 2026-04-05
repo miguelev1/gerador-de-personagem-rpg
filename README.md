@@ -144,6 +144,11 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ---
 
+## 🔜 Próximas funcionalidades
+- [ ] Salvar fichas geradas (banco de dados)
+- [ ] Exportar ficha em PDF
+- [ ] Histórico de personagens
+      
 <p align="center">
   Feito com ☕ e dados de RPG
 </p>
